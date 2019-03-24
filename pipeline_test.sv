@@ -7,12 +7,12 @@ module tbench_top;
   bit reset;
 
   logic [4:0] output_val;
-  logic       output_valid;
-  logic       output_rdy;
+  logic       out_valid;
+  logic       out_rdy;
 
   logic [4:0] input_val;
-  logic       input_valid;
-  logic       input_rdy;
+  logic       in_valid;
+  logic       in_rdy;
   
   //clock generation
   always #5 clk = ~clk;
@@ -25,13 +25,13 @@ module tbench_top;
 
   initial begin
     input_val = 0;
-    input_valid = 2;
-    output_rdy = 1;
+    in_valid = 2;
+    out_rdy = 1;
     #10
     @(posedge clk)
-    input_valid = 1;
+    in_valid = 1;
     @(posedge clk)
-    input_valid = 0;
+    in_valid = 0;
     end
     
   
@@ -39,12 +39,12 @@ module tbench_top;
   pipeline DUT (
 
     .output_val(output_val),
-    .output_valid(output_valid),
-    .output_rdy(output_rdy),
+    .pipe_out_valid(out_valid),
+    .pipe_out_rdy(out_rdy),
 
     .input_val(input_val),
-    .input_valid(input_valid),
-    .input_rdy(input_rdy),
+    .pipe_in_valid(in_valid),
+    .pipe_in_rdy(in_rdy),
 
     .clk_i(clk),
     .reset_i(reset)
