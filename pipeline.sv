@@ -20,7 +20,7 @@ module pipeline
    always_ff @(posedge clk_i)
    begin
 
-     `pipeFlow(pipe, 5)
+     `pipeFlow(pipe_in, pipe_out, 5)
 
      if (update_pipe[0]) begin
        q0 <= input_val;
