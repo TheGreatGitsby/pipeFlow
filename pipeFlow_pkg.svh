@@ -1,7 +1,7 @@
-  `define pipeFlow(name, num_stages) \
+  `define pipeFlow(in_name, out_name, num_stages) \
      static    logic [``num_stages``-1:0] stage_valid = '0; \
      automatic logic [``num_stages``-1:0] update_pipe = '0; \
-     automatic logic update_regs = ``name``_out_rdy; \
+     automatic logic update_regs = ``out_name``_rdy; \
      static logic rdy_switch = 1; \
 \
      if (``num_stages`` > 1) begin \
@@ -15,13 +15,13 @@
        end \
      end \
 \
-     if ((update_regs) || (!stage_valid[0])) begin \
+     if ((update_regs) | (~stage_valid[0])) begin \
        if (rdy_switch) begin \
          `ifdef DISABLE_PIPELINING \
-           rdy_switch = !``name``_in_valid; \
+           rdy_switch <= !(``in_name``_valid & ``in_name``_rdy); \
          `endif \
-         stage_valid[0] = ``name``_in_valid; \
-         update_pipe[0] = ``name``_in_valid; \
+         stage_valid[0] = ``in_name``_valid; \
+         update_pipe[0] = ``in_name``_valid; \
        end \
        else begin \
          stage_valid[0] = 0; \
@@ -30,12 +30,23 @@
 \
      end \
 \
-     if (``name``_out_rdy && ``name``_out_valid) begin \
+     if (``out_name``_rdy & ``out_name``_valid) begin \
        rdy_switch = 1; \
      end \
 \
-     ``name``_in_rdy    <= (``name``_out_rdy || !(stage_valid == '1)) && rdy_switch; \
-     ``name``_out_valid <= stage_valid[``num_stages``-1];
+     ``in_name``_rdy    <= (``out_name``_rdy | ~(stage_valid == '1)) & rdy_switch; \
+     ``out_name``_valid <= stage_valid[``num_stages``-1];
 
-`define pipeFlowAttrb(arg1) \
-   `define arg1
+  `define delayFlow(in_name, out_name, num_stages) \
+     static  logic [``num_stages``-1:0] stage_valid = '0; \
+\
+  stage_valid[0] <= (``in_name``_rdy  & ``in_name``_valid); \
+\
+  if (!(stage_valid[``num_stages``-1] & (!``out_name``_rdy))) begin \
+    for (int i=1; i<``num_stages``; i++) begin \
+      stage_valid[i] <= stage_valid[i-1]; \
+    end \
+  end \
+\
+  ``in_name``_rdy <= !(stage_valid | (``in_name``_rdy  & ``in_name``_valid)); \
+  ``out_name``_valid <= stage_valid[``num_stages``-1];
