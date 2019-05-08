@@ -17,29 +17,39 @@ module pipeline
    logic [4:0] q0, q1, q2, q3, q4;
 
    //   [] -> [] -> [] -> [] -> [] ->
-   always_ff @(posedge clk_i)
-   begin
+   always_ff @(posedge clk_i) begin
 
-     `pipeFlow(pipe, 5)
+     if (reset_i) begin
 
-     if (update_pipe[0]) begin
-       q0 <= input_val;
-     end
-     if (update_pipe[1]) begin
-       q1 <= q0;
-     end
-     if (update_pipe[2]) begin
-       q2 <= q1;
-     end
-     if (update_pipe[3]) begin
-       q3 <= q2;
-     end
-     if (update_pipe[4]) begin
-       q4 <= q3;
+       q0 <= '0;
+       q1 <= '0;
+       q2 <= '0;
+       q3 <= '0;
+       q4 <= '0;
+
+       end else begin
+
+       `pipeFlow(pipe, 5)
+
+       if (update_pipe[0]) begin
+         q0 <= input_val;
+       end
+       if (update_pipe[1]) begin
+         q1 <= q0;
+       end
+       if (update_pipe[2]) begin
+         q2 <= q1;
+       end
+       if (update_pipe[3]) begin
+         q3 <= q2;
+       end
+       if (update_pipe[4]) begin
+         q4 <= q3;
+       end
+       
      end
 
    end
-
 
 endmodule
 
