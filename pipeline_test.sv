@@ -25,7 +25,7 @@ module tbench_top;
 
   initial begin
     input_val = 0;
-    in_valid = 2;
+    in_valid = 0;
     out_rdy = 1;
     #10
     @(posedge clk)
