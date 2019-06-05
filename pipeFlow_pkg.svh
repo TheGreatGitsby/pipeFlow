@@ -38,7 +38,7 @@
      ``out_name``_valid <= stage_valid[``num_stages``-1];
 
   `define delayFlow(in_name, out_name, num_stages) \
-     static  logic [``num_stages``-1:0] stage_valid = '0; \
+     logic [``num_stages``-1:0] stage_valid = '0; \
 \
   stage_valid[0] <= (``in_name``_rdy  & ``in_name``_valid); \
 \
